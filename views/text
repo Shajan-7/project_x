@@ -1,0 +1,855 @@
+
+const Admin_detailSchema = new mongoose.Schema({
+    user_name: {type: String, required: true, unique: true},
+    password: {type: String, required: true},
+    phone_no: {type: String, required: true},
+    mail: {type: String, required: true},
+    type: {type: String, default: "Admin"}
+});
+const Admin = mongoose.model("Admin_detail", Admin_detailSchema);
+
+const Customer_detailSchema = new mongoose.Schema({
+    user_name: {type: String, required: true, unique: true},
+    password: {type: String, required: true},
+    company: {type: String, required: true},
+    phone: {type: String, required: true},
+    mail: {type: String, required: true},
+    address: {type: String, required: true},
+    type: {type:String, default: "Customer"}
+});
+const Customer = mongoose.model("Customer_detail", Customer_detailSchema);
+
+const Truck_detailSchema = new mongoose.Schema({
+    user_name: {type: String, required: true, unique: true},
+    password: {type: String, required: true},
+    phone: {type: String, required: true},
+    mail: {type: String, required: true},
+    truck_number: {type: String, required: true},
+    truck_name: {type: String, required: true},
+    truck_type: {type: String, required: true},
+    price: {type: Number, required: true},
+    price_type: {type: String, required: true},
+    current_location: {type: String, required: true},
+    truck_status: {type: String, default: "free"},
+    driver_name: {type: String, required: true},
+    driver_phone: {type: String, required: true},
+    last_booking_date: {type: Date, required: true},
+    type:{type: String, default: "Truck"}
+});
+const Truck = mongoose.model("Truck_detail", Truck_detailSchema);
+
+const Booking_detailSchema = new mongoose.Schema({
+    bill_no: {type: String, required: true, unique: true},
+    customer_name: {type: String, required: true},
+    company_name: {type: String, required: true},
+    customer_address: {type: String, required: true},
+    customer_ph: {type: String, required: true},
+    customer_mail: {type: String, required: true},
+    truck_user: {type: String, required: true},
+    truck_number: {type: String, required: true},
+    truck_name: {type: String, required: true},
+    pickup: {type: String, required: true},
+    drop: {type: String, required: true},
+    date: {type: Date, required: true},
+    cargo_weight: {type: Number, required: true},
+    cargo_type: {type: String, required: true},
+    truck_price: {type: Number, required: true},
+    price_type: {type: String, required: true},
+    amount: {type: Number, required: true},
+    gst: {type: Number, requires:true},
+    extra_amount: {type: Number, required: true},
+    total_amount: {type: Number, required: true},
+    total_distance: {type: Number, required: true},
+    driver_name: {type: String, required: true},
+    driver_phone: {type: String, required: true},
+    payment: {type: String, required: true},
+    feedback: {type: String}
+});
+const Booking = mongoose.model("Booking", Booking_detailSchema);
+
+const inquirySchema = new mongoose.Schema({
+    userName: String,
+    email: String,
+    billNo: String,
+    query: String,
+    truckDetails: String,
+    driverDetails: String,
+});
+  
+const Inquiry = mongoose.model('Inquiry', inquirySchema);
+
+const transporter = nodemailer.createTransport({
+    service: 'your_email_service_provider',
+    auth: {
+      user: 'your_email_address',
+      pass: 'your_email_password',
+    },
+});
+  
+
+passport.use('admin', new LocalStrategy(async function(username, password, done) {
+    try {
+        const user = await Admin.findOne({ user_name: username }).exec();
+
+        if (!user) {
+            return done(null, false);
+        }
+
+        if (user.password !== password) {
+            return done(null, false);
+        }
+
+        return done(null, user);
+    } catch (err) {
+        return done(err);
+    }
+}));
+
+passport.use('customer', new LocalStrategy(async (username, password, done) => {
+    try {
+        const user = await Customer.findOne({ user_name: username }).exec();
+
+        if (!user) {
+            return done(null, false);
+        }
+
+        if (user.password !== password) {
+            return done(null, false);
+        }
+
+        return done(null, user);
+    } catch (err) {
+        return done(err);
+    }
+}));
+
+passport.use('truck', new LocalStrategy(async function(username, password, done) {
+    try {
+        const user = await Truck.findOne({ user_name: username }).exec();
+        if (!user) {
+            return done(null, false); // User not found
+        }
+        if (user.password !== password) {
+            return done(null, false); // Password incorrect
+        }
+        return done(null, user); // Authentication success
+    } catch (err) {
+        return done(err); // Error during query
+    }
+}));
+
+passport.serializeUser(function(user, done) {
+    done(null, { id: user.id, type: user.type });
+});
+
+passport.deserializeUser(async function(user, done) {
+    const { id, type } = user;
+    let Model;
+
+    if (type === 'Customer') {
+        Model = Customer;
+    } else if (type === 'Truck') {
+        Model = Truck;
+    } else if (type === 'Admin') {
+        Model = Admin;
+    } else {
+        return done(new Error('Invalid user type'));
+    }
+
+    try {
+        const user = await Model.findById(id).exec();
+
+        if (!user) {
+            return done(null, false);
+        }
+
+        return done(null, user);
+    } catch (err) {
+        return done(err);
+    }
+});
+
+app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get("/", function (req, res) {
+    res.render("home",{flag:flag});
+});
+
+app.get("/about", function (req, res) {
+    //flag=0;
+    res.render("about", {flag:flag });
+});
+
+mess="";
+app.get("/login", function (req,res){
+    //flag=0;
+    res.render("login",{mess:mess, flag:flag});
+});
+
+app.get("/admin", function (req,res){
+    //flag=0;
+    res.render("adminlogin",{mess:mess, flag:flag});
+});
+
+app.post('/admin-login', passport.authenticate('admin', {failureRedirect: '/admin-error'}),function(req,res) {
+    flag=2;
+    req.session.loggedIn = true;
+    res.render("admin-profile",{flag: flag});
+});
+
+app.post('/customer-login', passport.authenticate('customer', {failureRedirect: '/login-error'}),function(req,res) {
+    flag=1;
+    req.session.loggedIn = true;
+    res.redirect("/customer-profile");
+});
+
+app.post('/truck-login', passport.authenticate('truck', {failureRedirect: '/login-error'}),function(req,res) {
+    flag=1;
+    req.session.loggedIn = true;
+    res.redirect("/truck-profile");
+});
+
+app.get('/logout', function (req, res) {
+    req.session.loggedIn = false;
+    flag=0;
+    res.redirect('/login');
+});
+
+app.get('/login-error', function (req, res) {
+    flag=0;
+    mess = "Invalid username or password"
+    res.render('login', { mess: mess, flag:flag });
+});
+
+app.get('/admin-error', function (req, res) {
+    flag=0;
+    mess = "Invalid username or password"
+    res.render('adminlogin', { mess: mess, flag:flag });
+});
+
+app.get("/signup", function (req, res) {
+    flag=0;
+    const truck_err="";
+    const customer_err="";
+    res.render("signup",{truck_err: truck_err,customer_err: customer_err, flag:flag});
+});
+
+app.post('/customer-signup', async (req, res) => {
+    const { username, pass, curpass } = req.body;
+    let flag = 1;
+
+    try {
+        const existingUser = await Customer.findOne({ user_name: username }).exec();
+
+        if (existingUser) {
+            const customer_err = "'Customer Username already exists'";
+            const truck_err = "";
+            res.render("signup", { truck_err, customer_err, flag });
+        } else if (pass === curpass) {
+            const newCustomer = new Customer({
+                user_name: req.body.username,
+                mail: req.body.mail,
+                phone: req.body.phone,
+                company: req.body.company,
+                address: req.body.address,
+                password: req.body.password,
+            });
+
+            // Save the user to the database
+            await newCustomer.save();
+
+            const mess = "Customer Signup done! please login.";
+            res.render("login", { mess, flag });
+        } else {
+            const truck_err = "";
+            const customer_err = "Password and confirm password should be the same!";
+            res.render("signup", { truck_err, customer_err, flag });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(err.message);
+    }
+});
+
+app.post("/truck-signup", async (req, res) => {
+    // flag=0; // I'm assuming flag is already defined somewhere else in your code
+    const pass = req.body.password;
+    const curpass = req.body.currentpassword;
+    const username = req.body.username;
+
+    try {
+        const existingUser = await Truck.findOne({ username }).exec();
+
+        if (existingUser) {
+            // If the user already exists, show an alert message
+            const truck_err = "'Truck Username already exists'";
+            const customer_err = "";
+            res.render("signup", { truck_err, customer_err, flag });
+        } else if (pass === curpass) {
+            // Create a new user
+            const currentDate = new Date();
+            const previousDate = new Date(currentDate);
+            previousDate.setDate(previousDate.getDate() - 1);
+
+            const newTruck = new Truck({
+                user_name: req.body.username,
+                mail: req.body.mail,
+                phone: req.body.phone,
+                truck_number: req.body.truckno,
+                truck_name: req.body.truckname,
+                truck_type: req.body.trucktype,
+                price: req.body.price,
+                price_type: req.body.ptype,
+                current_location: req.body.location,
+                driver_name: req.body.drname,
+                driver_phone: req.body.drphone,
+                last_booking_date: previousDate,
+                password: req.body.password,
+            });
+
+            // Save the user to the database
+            await newTruck.save();
+
+            const mess = "Truck Signup done! please login.";
+            res.render("login", { mess, flag });
+        } else {
+            flag = 0;
+            const truck_err = "Password and confirm password should be the same!";
+            const customer_err = "";
+            res.render("signup", { truck_err, customer_err, flag });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(err.message);
+    }
+});
+
+function isSameOrFutureDate(date1, date2) {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    return d1 >= d2;
+}
+
+function isPreviousDate(date, currentDate) {
+    const yesterday = new Date(currentDate);
+    yesterday.setDate(currentDate.getDate() - 1);
+    return isSameOrFutureDate(date, yesterday);
+}
+
+app.get("/customer-profile", async function (req, res) {
+    if (req.session.loggedIn) {
+        let flag = 1;
+        const user = req.user.user_name;
+        try {
+            const bookings = await Booking.find({ customer_name: user }).sort({ date: -1 }).exec();
+            const currentDate = new Date();
+            const currentBookings = [];
+            const recentBookings = [];
+            const oldBookings = [];
+
+            for (const booking of bookings) {
+                const bookingDate = new Date(booking.date);
+                if (isSameOrFutureDate(bookingDate, currentDate)) {
+                    currentBookings.push(booking);
+                } else if (isPreviousDate(bookingDate, currentDate)) {
+                    recentBookings.push(booking);
+                } else if (oldBookings.length < 4) {
+                    oldBookings.push(booking);
+                }
+            }
+
+            res.render("customerprofile", {
+                user: user,
+                currentBookings: currentBookings,
+                recentBookings: recentBookings,
+                oldBookings: oldBookings,
+                flag: flag
+            });
+        } catch (err) {
+            console.error(err);
+            res.render("customerprofile", { mess: "Error retrieving bookings", flag: flag });
+        }
+    } else {
+        const flag = 0;
+        res.render("login", { mess: mess, flag: flag });
+    }
+});
+
+
+// Additional route to load more bookings
+app.get("/loadMoreBookings", async function (req, res) {
+    if (req.session.loggedIn) {
+        const user = req.user.username;
+        try {
+            const bookings = await Booking.find({ customer_name: user }).sort({ date: -1 }).exec();
+            const currentDate = new Date();
+            const oldBookings = [];
+
+            for (const booking of bookings) {
+                const bookingDate = new Date(booking.date);
+                if (!isSameDate(bookingDate, currentDate) && !isPreviousDate(bookingDate, currentDate)) {
+                    oldBookings.push(booking);
+                }
+            }
+
+            res.json(oldBookings); // Send the oldBookings array as JSON response
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error retrieving bookings" });
+        }
+    } else {
+        res.status(401).json({ error: "Unauthorized" });
+    }
+});
+
+app.post('/submitFeedback', async function(req, res) {
+    const bookingId = req.body.bookingId;
+    const feedback = req.body.feedback;
+
+    try {
+        // Update the booking with the new feedback
+        await Booking.updateOne({ _id: bookingId }, { $set: { feedback: feedback } });
+        res.redirect('/customer-profile');
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error submitting feedback' });
+    }
+});
+
+app.get("/truck-profile", async function (req, res) {
+    if (req.session.loggedIn) {
+        flag = 3;
+        let mess = "";
+        const user = req.user.user_name;
+        console.log(user);
+        try {
+            const bookings = await Booking.find({ truck_user: user }).sort({ date: -1 }).exec();
+
+            const currentDate = new Date();
+            const currentBookings = [];
+            const recentBookings = [];
+            const oldBookings = [];
+
+            for (const booking of bookings) {
+                const bookingDate = new Date(booking.date);
+                if (isSameDate(bookingDate, currentDate)) {
+                    currentBookings.push(booking);
+                } else if (isPreviousDate(bookingDate, currentDate)) {
+                    recentBookings.push(booking);
+                } else if (oldBookings.length < 4) {
+                    oldBookings.push(booking);
+                }
+            }
+
+            res.render("truckprofile", {
+                user: user,
+                currentBookings: currentBookings,
+                recentBookings: recentBookings,
+                oldBookings: oldBookings,
+                flag: flag
+            });
+        } catch (err) {
+            console.error(err);
+            res.render("truckprofile", { mess: "Error retrieving bookings", flag: flag });
+        }
+    } else {
+        const flag = 0;
+        res.render("login", { mess: mess, flag: flag });
+    }
+});
+
+app.get("/loadMoreBookings_truck", async function (req, res) {
+    if (req.session.loggedIn) {
+        const user = req.user.username;
+        try {
+            const bookings = await Booking.find({ truck_user: user }).sort({ date: -1 }).exec();
+            const currentDate = new Date();
+            const oldBookings = [];
+
+            for (const booking of bookings) {
+                const bookingDate = new Date(booking.date);
+                if (!isSameDate(bookingDate, currentDate) && !isPreviousDate(bookingDate, currentDate)) {
+                    oldBookings.push(booking);
+                }
+            }
+
+            res.json(oldBookings); // Send the oldBookings array as JSON response
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: "Error retrieving bookings" });
+        }
+    } else {
+        res.status(401).json({ error: "Unauthorized" });
+    }
+});
+
+app.get("/booking", function (req, res) {
+    if (req.session.loggedIn) {
+        flag=1;
+        mess1="";
+        res.render("booking",{mess1: mess1, flag:flag});
+    } else {
+        flag=0;
+        mess = "Need to login first!";
+        res.render("login", { mess: mess, flag:flag });
+    }
+});
+
+app.post("/available-trucks", async function (req, res) {
+    if (req.session.loggedIn) {
+        try {
+            flag = 1;
+            const weight = req.body.ton;
+            let truckType = "";
+
+            if (weight >= 5 && weight <= 9) {
+                truckType = "small";
+            } else if (weight >= 10 && weight <= 15) {
+                truckType = "medium";
+            } else if (weight >= 16 && weight <= 24) {
+                truckType = "large";
+            }
+
+            // Update the truck status for trucks whose last booking date is yesterday or earlier
+            const yesterday = moment().subtract(1, 'days').startOf('day').toDate();
+            await Truck.updateMany(
+                { last_booking_date: { $lte: yesterday }, truck_status: "booked" },
+                { $set: { truck_status: "free" } }
+            ).exec();
+
+            const docs = await Truck.find({ 
+                current_location: req.body.pickup,
+                truck_status: "free",
+                truck_type: truckType
+            }).exec();
+
+            pickup1 = req.body.pickup;
+            drop1 = req.body.drop;
+            booking_date = req.body.date;
+            material =req.body.material;
+            ton1=req.body.ton;
+            pay=req.body.paymethod;
+            //console.log(date);
+
+            if (pickup1 === drop1) {
+                mess1 = "Pickup and Drop location cannot be the same!";
+                res.render("booking", { mess1: mess1, flag: flag });
+            } else {
+                res.render("available-trucks", { docs: docs, flag: flag });
+            }
+        } catch (err) {
+            console.error(err);
+            // Handle error response here
+            res.status(500).send("Error processing request.");
+        }
+    } else {
+        flag = 0;
+        mess = "Need to login first!";
+        res.render("login", { mess: mess, flag: flag });
+    }
+});
+
+app.post("/bill-details", async function (req, res) {
+    if (req.session.loggedIn) {
+        try {
+            flag = 1;
+
+            const docs1 = await Truck.findOne({ truck_number: req.body.truckno }).exec();
+            if (!docs1) {
+                return res.status(404).send("Booking not found");
+            }
+            
+
+            truck_id=req.body.id;
+            customer_name= req.user.user_name;
+            company = req.user.company;
+            address=req.user.address;
+            mail=req.user.mail;
+            uphone=req.user.phone;
+            truckn= req.body.truckname;
+            tno= req.body.truckno;
+            mail=req.body.mail;
+            uname= req.body.username;
+            name_phone= req.body.phone;
+            typet= req.body.type;
+            pricet= req.body.price;
+            prtype=req.body.ptype;
+            tph= req.body.tphone;
+            dname=req.body.drname;
+            dphone=req.body.drphone;
+            km=650;
+            extra="";
+            extra_amount=0;
+
+            const today = moment().toDate();
+            const tomorrow = moment().add(1, 'days').startOf('day').toDate();
+            if (booking_date === 'today') {
+                original_date = moment(today).format('YYYY-MM-DD'); 
+            } else if (booking_date === 'tomorrow') {
+                original_date = moment(tomorrow).format('YYYY-MM-DD'); 
+            }
+            
+            const currentDate = moment().format("YYYYMMDD");
+            const truckPart = tno.slice(-4); // Last 4 characters of truckno
+            const datePart = currentDate.slice(-4); // Last 4 characters of currentDate
+
+            bill_no = `${truckPart}/${datePart}`;
+
+            if(prtype=="per ton"){
+                if(booking_date==="today"){
+                    amount1=pricet*ton1;
+                    gst=amount1*15/100;
+                    tamount=amount1+amount1*15/100;
+                }
+                else{
+                    amount1=pricet*ton1;
+                    gst=amount1*15/100;
+                    extra_amount=(amount1*1/10);
+                    extra="*For Advance booking need extra of 10% amount charged";
+                    tamount=amount1+(amount1*15/100)+(amount1*1/10);
+                }
+            }
+            if(prtype=="per km"){
+                if(booking_date==="today"){
+                    amount1=pricet*km;
+                    gst=amount1*15/100;
+                    tamount=amount1+amount1*15/100;
+                }
+                else{
+                    amount1=pricet*km;
+                    gst=amount1*15/100;
+                    extra="*For Advance booking need extra of 10% amount charged";
+                    extra_amount=(amount1*1/10);
+                    tamount=amount1+(amount1*15/100)+(amount1*1/10);
+                }
+            }
+        
+            res.render("details", {
+                billno: bill_no,
+                customer_name:customer_name,
+                company:company,
+                address:address,
+                phone:uphone,
+                mail:mail,
+                docs1: docs1,
+                pickup: pickup1,
+                drop: drop1,
+                ton: ton1,
+                amount: amount1,
+                gst: gst,
+                totalamount: tamount,
+                km: km,
+                pay: pay,
+                date: original_date,
+                flag: flag,
+                extra:extra
+            });
+        } catch (err) {
+            console.error(err);
+            res.status(500).send("Error processing request.");
+        }
+    } else {
+        flag = 0;
+        mess = "Need to login first!";
+        res.render("login", { mess: mess, flag: flag });
+    }
+});
+
+app.post("/done", async function (req, res) {
+    if (req.session.loggedIn) {
+        flag = 0;
+        try {
+            const newBooking = new Booking({
+                bill_no: bill_no,
+                customer_name: customer_name,
+                company_name: company,
+                customer_address: address,
+                customer_ph: uphone,
+                customer_mail: mail,
+                truck_user: uname,
+                truck_number: tno,
+                truck_name: truckn,
+                pickup: pickup1,
+                drop: drop1,
+                date: original_date,
+                cargo_weight: ton1,
+                cargo_type: material,
+                truck_price: pricet,
+                price_type: prtype,
+                amount: amount1,
+                gst: gst,
+                extra_amount: extra_amount,
+                total_amount: tamount,
+                total_distance: km,
+                driver_name: dname,
+                driver_phone: dphone,
+                payment: pay
+            });
+
+            await newBooking.save();
+
+            await Truck.findByIdAndUpdate(
+                truck_id,
+                { $set: { current_location: drop1, truck_status: "booked" } }
+            );
+            res.redirect("/customer-profile");
+        } catch (error) {
+            console.error("Error:", error);
+            flag = 0;
+            mess = "An error occurred while processing your request.";
+            res.render("login", { mess: mess, flag: flag });
+        }
+    } else {
+        flag = 0;
+        mess = "Need to login first!";
+        res.render("login", { mess: mess, flag: flag });
+    }
+});
+
+app.post("/billing", async function (req, res) {
+    try {
+        if (req.session.loggedIn) {
+            const flag = 1;
+            const bookingId = req.body._id;
+
+            const bookings = await Booking.findById(bookingId);
+            if (!bookings) {
+                throw new Error('Booking not found');
+            }
+            res.render("billing", { docs1: bookings, flag: flag });
+        } else {
+            const flag = 0;
+            const mess = "Need to login first!";
+            res.render("login", { mess: mess, flag: flag });
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ success: false, message: "Error processing request" });
+    }
+});
+
+app.post('/searching', async (req, res) => {
+    const searchText = req.body.searchText.trim();
+  
+    try {
+      // Search for truck details based on truck number
+      const truckDetails = await Truck.findOne({ truckNumber: searchText }).exec();
+      const user = req.user.username;
+      if (truckDetails) {
+        // Found truck details, render the truck details template
+        res.render('truckDetails', { truckDetails });
+        return;
+      }
+  
+      // Search for booking details based on bill number
+      const bookingDetails = await Booking.findOne({ bill_no: searchText }).exec();
+      
+      if (bookingDetails) {
+        // Found booking details, render the booking details template
+        res.render('bookingDetails', { bookingDetails });
+        return;
+      }
+  
+      // No matching truck or booking found, render error template
+      res.render('error', { message: 'No matching truck or booking found.' });
+    } catch (error) {
+      console.error('Error searching:', error);
+      res.render('error', { message: 'Error searching.' });
+    }
+  });
+
+  app.post('/contact', async (req, res) => {
+    try {
+      // Extract user input from the request
+      const {
+        userName,
+        email,
+        billNo,
+        query,
+        truckDetails,
+        driverDetails,
+      } = req.body;
+  
+      // Validate the bill number using a regular expression
+      const billNoRegex = /^\d{4}\/\d{4}$/;
+      if (!billNo.match(billNoRegex)) {
+        return res.status(400).send('Invalid bill number format.');
+      }
+  
+      // Create a new inquiry record in MongoDB
+      const newInquiry = new Inquiry({
+        userName,
+        email,
+        billNo,
+        query,
+        truckDetails,
+        driverDetails,
+      });
+  
+      await newInquiry.save();
+  
+      // Compose and send an email response
+      const mailOptions = {
+        from: 'your_email_address',
+        to: email,
+        subject: 'Thank you for your inquiry',
+        text: 'Your inquiry has been received and will be processed.',
+      };
+  
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error(error);
+        } else {
+          console.log('Email sent: ' + info.response);
+        }
+      });
+  
+      res.send('Inquiry submitted successfully.');
+    } catch (error) {
+      console.error('Error handling inquiry:', error);
+      res.status(500).send('Error handling inquiry.');
+    }
+  });
+
+  app.get('/admin-dashboard', async (req, res) => {
+    try {
+        // Fetch pending inquiries from MongoDB, sorted by date (newest first)
+        const inquiries = await Inquiry.find({ status: 'pending' }).sort({ _id: -1 });
+        const flag=2;
+        if (inquiries.length === 0) {
+            res.render('admin-dashboard', { inquiries: null, message: 'No pending inquiries.', flag: flag });
+        } else {
+            res.render('admin-dashboard', { inquiries, message: null , flag: flag});
+        }
+    } catch (error) {
+        console.error('Error fetching pending inquiries:', error);
+        res.status(500).send('Error fetching inquiries.');
+    }
+});
+
+
+
+  app.post('/admin/update-status/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        // Update the status of the inquiry in MongoDB
+        await Inquiry.findByIdAndUpdate(id, { status });
+
+        // Redirect back to the admin dashboard
+        res.redirect('/admin/dashboard');
+    } catch (error) {
+        console.error('Error updating inquiry status:', error);
+        res.status(500).send('Error updating inquiry status.');
+    }
+});
+
+
+app.listen(3000, function() {
+    console.log('Server started! Click this to view http://localhost:3000');
+});
+
+

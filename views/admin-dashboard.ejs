@@ -1,0 +1,46 @@
+<!-- Admin Editor  -->
+<!-- Last Importance -->
+
+<%- include("partials/header"); -%>
+    <link rel="stylesheet" href="admin.css">
+    <section class="admin">
+        
+    <h1>Admin Dashboard</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Email</th>
+                <th>Bill No</th>
+                <th>Query/Problem</th>
+                <th>Truck Details</th>
+                <th>Driver Details</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (inquiries) { %>
+            <% inquiries.forEach(function(inquiry) { %>
+                <tr>
+                    <td><%= inquiry.userName %></td>
+                    <td><%= inquiry.email %></td>
+                    <td><%= inquiry.billNo %></td>
+                    <td><%= inquiry.query %></td>
+                    <td><%= inquiry.truckDetails %></td>
+                    <td><%= inquiry.driverDetails %></td>
+                    <td>
+                        <form action="/admin/update-status/<%= inquiry._id %>" method="POST">
+                            <select name="status">
+                                <option value="pending" <%= inquiry.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                <option value="done" <%= inquiry.status === 'done' ? 'selected' : '' %>>Done</option>
+                            </select>
+                            <button type="submit">Update Status</button>
+                        </form>
+                    </td>
+                </tr>
+            <% }); %>
+            <% } %>
+        </tbody>
+    </table>
+</section>
+<%- include("partials/footer"); -%>

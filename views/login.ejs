@@ -1,0 +1,67 @@
+<%- include("partials/header"); -%>
+<!-- <section class="login-section">
+  <div class="main">
+      <h4 class="login-alert">
+          <%= mess %>
+      </h4>
+
+      <input type="checkbox" id="chk">
+
+      <div class="login">
+          <form method="post" action="/customer-login">
+              <label for="chk" aria="true">Customer Login</label>
+              <input type="text" name="username" placeholder="User name">
+              <input type="password" name="password" placeholder="Password">
+              <input type="submit" value="Login">
+              <p>Need an account?</p>
+              <a href="signup">Signup</a>
+          </form>
+      </div>
+
+      <div class="signup">
+          <form method="post" action="/truck-login">
+              <label for="chk" aria-hidden="true">Truck Login</label>
+              <input type="text" name="name" placeholder="Truck no">
+              <input type="password" name="password" placeholder="Password">
+              <input type="submit" value="Login">
+              <p>Need an account?</p>
+              <a href="signup">Signup</a>
+          </form>
+      </div>
+  </div>
+</section> -->
+<link rel="stylesheet" type="text/css" href="login.css">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+<section class="shajan-body">
+  <div class="main">  	
+    <input type="checkbox" id="chk" aria-hidden="true">
+
+      <div class="signup">
+        <form method="post" action="/customer-login">
+          <h4 class="login-alert">
+            <%= mess %>
+        </h4>
+          <label for="chk" aria="true">Customer Login</label>
+          <input type="text" name="username" placeholder="User name" >
+          
+          <input type="password" name="password" placeholder="Password" >
+          <button>Login</button>
+          <p>Need an account?</p>
+          <a href="signup">Signup</a>
+        </form>
+      </div>
+
+      <div class="login">
+        <form method="post" action="/truck-login">
+          <label for="chk" aria-hidden="true">Truck Login</label>
+          <input type="text" name="username" placeholder="User Name" >
+          <input type="password" name="password" placeholder="Password" >
+          <button>Login</button>
+          <p>Need an account?</p>
+          <a href="signup">Signup</a>
+        </form>
+      </div>
+  </div>
+</section>
+
+<%- include("partials/footer"); -%>

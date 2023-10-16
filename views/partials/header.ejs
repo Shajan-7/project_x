@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>Freight Booking</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="footer.css">
+  <link rel="stylesheet" href="body.css">
+  
+<body > 
+  <header>
+    <nav>
+      <div class="title">
+
+        <h3> Freight Booking Site</h3>
+        <!-- <img src="imgs/icon.png" alt="" class="icon"> -->
+      </div>
+      <div class="navigate">
+        <ul>
+          <input type="hidden" value="">
+          <form action="/searching" method="post">
+          <span id="flag"><%=flag%></span>
+          <li class="li-items" id="search-container">
+            <input type="text" placeholder="Search Bill No" class="search-input">
+            <button class="search-button"><?xml version="1.0" ?><svg height="12" viewBox="0 0 40 40" width="12" xmlns="http://www.w3.org/2000/svg"><path d="M31 28h-1.59l-.55-.55c1.96-2.27 3.14-5.22 3.14-8.45 0-7.18-5.82-13-13-13s-13 5.82-13 13 5.82 13 13 13c3.23 0 6.18-1.18 8.45-3.13l.55.55v1.58l10 9.98 2.98-2.98-9.98-10zm-12 0c-4.97 0-9-4.03-9-9s4.03-9 9-9 9 4.03 9 9-4.03 9-9 9z"/><path d="M0 0h48v48h-48z" fill="none"/></svg></button>
+          </li>
+          <li class="li-items" id="home"><a href="/">Home</a></li>
+          <li class="li-items" id="admin"><a href="/admin">Administrator</a></li>
+          <li class="li-items" id="profile-customer"><a href="/customer-profile">Profile</a></li>
+          <li class="li-items" id="profile-truck"><a href="/truck-profile">Profile</a></li>
+          <li class="li-items" id="booking"><a href="/booking">Booking</a></li>
+          <li class="li-items" id="about"><a href="/about">About Us</a></li>
+          <li class="li-items" id="login">
+            <a href="#" class="login-link" onclick="toggleLoginMenu()">Login/Signup</a>
+            <div class="login-menu" id="loginMenu">
+              <a href="/login">Login</a>
+              <a href="/signup">Signup</a>
+              <a href="/admin">Admin Login</a>
+            </div>
+          </li>
+          <li class="li-items" id="logout"><a href="/logout">Logout</a></li>
+        </ul>
+      </form>
+      </div>
+    </nav>
+  </header>
+
+  <script>
+    let flag = document.getElementById("flag").innerText;
+    if (flag == 1) {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("admin").style.display = "none";
+      document.getElementById("profile-truck").style.display = "none";
+    } else if(flag==2) {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("search-container").style.display = "none";
+      document.getElementById("home").style.display = "none";
+      document.getElementById("about").style.display = "none";
+      document.getElementById("profile-truck").style.display = "none";
+      document.getElementById("profile-customer").style.display = "none";
+      document.getElementById("booking").style.display = "none";
+    } else if(flag==3){
+      document.getElementById("login").style.display = "none";
+      document.getElementById("admin").style.display = "none";
+      document.getElementById("booking").style.display = "none";
+      document.getElementById("profile-customer").style.display = "none";
+    } else {
+      document.getElementById("logout").style.display = "none";
+      document.getElementById("search-container").style.display = "none";
+      document.getElementById("admin").style.display = "none";
+      document.getElementById("profile-customer").style.display = "none";
+      document.getElementById("profile-truck").style.display = "none";
+      document.getElementById("booking").style.display = "none";
+    }
+
+    function toggleLoginMenu() {
+            const loginMenu = document.getElementById('loginMenu');
+            loginMenu.classList.toggle('show');
+        }
+  </script>
+<!-- <li id="home"><a href="/">Home</a></li> -->
+<!-- <li id="logout"><a href="/logout">Logout</a></li> -->

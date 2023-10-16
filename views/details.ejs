@@ -1,0 +1,98 @@
+<!-- Booking page3 -->
+<!-- Advanced Styling -->
+
+<%- include("partials/header"); -%>
+  <link rel="stylesheet" href="details.css">
+
+  <section class="details">
+
+    <div class="holder">
+      <h3 class="title">Confirm your Booking</h3>
+      <div class="container">
+        <div class="set">
+          <div class="box">
+            <h4>Your Details</h4>
+            <p><span>Name</span> : <%=customer_name %>
+            </p>
+            <p><span> Industry name</span> : <%=company %>
+            </p>
+            <p><span>Your Email</span> : <%=mail %>
+            </p>
+            <p><span>Phone.no</span> : <%=phone %>
+            </p>
+            <p><span>Address</span> : <%=address %>
+            </p>
+          </div>
+          <div class="box">
+            <h4>Booking Details</h4>
+            <p><span>Bill_No </span> : <%= billno %>
+            </p>
+            <p><span>From </span> : <%= pickup %>
+            </p>
+            <p><span>To </span> : <%= drop %>
+            </p>
+            <p><span>Date </span> : <%= date %>
+            </p>
+            <p><span>Total Distance</span> : <%= km %> kms</p>
+            <p><span>Weight</span> : <%= ton %> tonnes</p>
+          </div>
+
+        </div>
+        <div class="set">
+          <div class="box">
+            <h4>Truck Details</h4>
+            <p>
+              <span>Truck Name </span> : <%= docs1.truck_name %>
+            </p>
+            <p>
+              <span>Truck No </span> : <%= docs1.truck_number %>
+            </p>
+            <p>
+              <span>Truck Type </span> : <%= docs1.truck_type %>
+            </p>
+            <p>
+              <span>Driver Name </span> : <%= docs1.driver_name %>
+            </p>
+            <p>
+              <span>Driver Contact </span> : <%= docs1.driver_phone %>
+            </p>
+          </div>
+          <div class="box">
+            <h4>Bill Details</h4>
+            <p><span>Price Type</span> : ₹<%= docs1.price %>
+                <%= docs1.price_type %>
+            </p>
+            <p><span>Amount</span> : ₹<%= amount %>
+            </p>
+            <p><span>GST</span> : ₹<%= gst %>
+            </p>
+            <p><%= extra %></p>
+            <p><span>Total Amount</span> : ₹<%= totalamount %> 
+            </p>
+            <p><span>Payment Mode</span> : <%= pay %> 
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="buttons">
+        <div>
+          <form action="/done" method="post">
+            <button class="acc" type="submit">Confirm</button>
+          </form>
+        </div>
+        <div>
+          <button class="can" id="cancel-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script>
+    const cancelBtn = document.getElementById('cancel-btn');
+    cancelBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      window.history.back();
+    });
+
+  </script>
+
+  <%- include("partials/footer"); -%>

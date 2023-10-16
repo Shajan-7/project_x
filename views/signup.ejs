@@ -1,0 +1,151 @@
+<%- include("partials/header"); -%>
+    <link rel="stylesheet" href="signup.css">
+    
+    <section class="signup">
+
+        <div class="left-side">
+            <h1>Welcome to Signup,</h1>
+            <p>Choose your user type:</p>
+            <div class="user-buttons">
+                <button onclick="showCustomerForm()">Customer Signup</button>
+                <button onclick="showTruckForm()">Truck Signup</button>
+            </div>
+        </div>
+        <div class="container">
+                <div id="customer-page" class="customer-page right-side hidden">             
+                    <form method="post" action="/customer-signup" id="customerForm" class="">
+                        <h5 class="signup-alert">
+                            <%= customer_err%>
+                        </h5>
+                        <h2 class="signup-center">Customer Signup</h2>
+                        <div> <label>User Name : </label>
+                            <input type="text" name="username" required />
+                        </div>
+                        <div><label>Phone : </label>
+                            <input type="tel" name="phone" pattern="[6-9]{1}[0-9]{9}" required>
+                        </div>
+                        <div><label>Mail : </label>
+                            <input type="email" name="mail" required />
+                        </div>
+                        <div><label>Company name : </label>
+                            <input type="text" name="company" required />
+                        </div>
+                        <div><label>Password : </label>
+                            <input type="password" name="password" required />
+                        </div>
+                        <div><label>Confirm Password : </label>
+                            <input type="password" name="currentpassword" required/>
+                        </div> 
+                        <div><label>Address : </label>
+                            <input type="text" name="address" required />
+                        </div>
+                        <div class="signup-center">
+                            <input type="submit" value="Sign Up" />
+                        </div>
+                        <p class="signup-center">Already a user? </p>
+                        <div class="signup-center">
+                            <a href="login"><button type="button">Login</button> </a>
+                        </div>
+                    </form>
+                </div>
+                <div id="truck-page" class="truck-page right-side hidden">             
+                    <form method="post" action="/truck-signup" id="truckForm" class="">
+                        <h5 class="signup-alert">
+                            <%= truck_err%>
+                        </h5>
+                        <h2 class="signup-center">Truck Signup</h2>
+                        <div> <label>User Name : </label>
+                            <input type="text" name="username" required />
+                        </div>
+                        <div><label>Phone : </label>
+                            <input type="tel" name="phone" pattern="[6-9]{1}[0-9]{9}" required>
+                        </div>
+                        <div><label>Mail : </label>
+                            <input type="email" name="mail" required />
+                        </div>
+                        <div><label>Password : </label>
+                            <input type="password" name="password" required />
+                        </div>
+                        <div><label>Confirm Password : </label>
+                            <input type="password" name="currentpassword" required/>
+                        </div>
+                        <div><label>Truck No : </label>
+                            <input type="text" name="truckno" required />
+                        </div>
+                        <div><label>Truck name : </label>
+                            <input type="text" name="truckname" required />
+                        </div>
+                        <div class="truck-type">
+                            <label>Truck Type : </label>
+                            <select name="trucktype" id="trucktype">
+                                <option value="small">small</option>
+                                <option value="medium">Medium</option>
+                                <option value="large">Large</option>
+                            </select>
+                        </div>
+                        <div><label>Price : </label>
+                            <input type="number" name="price" required />
+                            <select name="ptype" id="pricetype">
+                                <option value="per ton">Per Ton</option>
+                                <option value="per km">Per km</option>
+                            </select>
+                        </div>
+                        <div><label>Current location : </label>
+                            <select name="location" id="location">
+                                <option value="">select</option>
+                                <option value="Kanyakumari">Kanyakumari</option>
+                                <option value="Thoothukudi">Thoothukudi</option>
+                                <option value="Tirunelveli">Tirunelveli</option>
+                                <option value="Tenkasi">Tenkasi</option>
+                                <option value="Sivaganga">Sivaganga</option>
+                                <option value="Virudhunagar">Virudhunagar</option>
+                                <option value="Madurai">Madurai</option>
+                                <option value="Tiruchirappalli">Tiruchirappalli</option>
+                                <option value="Tiruppur">Tiruppur</option>
+                                <option value="Namakkal">Namakkal</option>
+                                <option value="Salem">Salem</option>
+                                <option value="Karur">Karur</option>
+                                <option value="Cuddalore">Cuddalore</option>
+                                <option value="Kancheepuram">Kancheepuram</option>
+                                <option value="Chennai">Chennai</option>
+                            </select>
+                        </div>
+                        <div><label>Driver Name : </label>
+                            <input type="text" name="drname" required />
+                        </div>
+                        <div><label>Driver Phone : </label>
+                            <input type="text" name="drphone" required />
+                        </div>
+                        <div class="signup-center">
+                            <input type="submit" value="Sign Up" />
+                        </div>
+                        <p class="signup-center">Already a user? </p>
+                        <div class="signup-center">
+                            <a href="login"><button type="button">Login</button> </a>
+                        </div>
+                    </form>
+                    
+                </div>
+            <!-- </div> -->
+            
+        </div>
+    
+        <script>
+            function showCustomerForm() {
+                hideForms();
+                document.getElementById('customer-page').classList.remove('hidden');
+            }
+    
+            function showTruckForm() {
+                hideForms();
+                document.getElementById('truck-page').classList.remove('hidden');
+            }
+    
+            function hideForms() {
+                document.getElementById('customer-page').classList.add('hidden');
+                document.getElementById('truck-page').classList.add('hidden');
+            }
+        </script>
+    </section>
+<%- include("partials/footer"); -%>
+    

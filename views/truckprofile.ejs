@@ -1,0 +1,120 @@
+<%- include("partials/header"); -%>
+
+<section class="truck-profile">
+    <div class="container">
+        <h1>Welcome, <%= user %></h1>
+    
+        <div class="booking-section">
+            <h2>Current Bookings</h2>
+            <% if (currentBookings.length > 0) { %>
+                <% currentBookings.forEach(function(booking) { %>
+                    <div class="booking">
+                        <p>Booking ID: <%= booking.bill_no %></p>
+                        <!-- Display other booking details -->
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p>No current bookings.</p>
+            <% } %>
+        </div>
+
+        <!-- Recent Bookings -->
+        <div class="booking-section">
+            <h2>Recent Bookings</h2>
+            <% if (recentBookings.length > 0) { %>
+                <% recentBookings.forEach(function(booking) { %>
+                    <div class="booking">
+                        <p>Booking ID: <%= booking.bill_no %></p>
+                        <!-- Display other booking details -->
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <p>No recent bookings.</p>
+            <% } %>
+        </div>
+
+        <!-- Old Bookings -->
+        <div class="booking-section">
+            <h2>Old Bookings</h2>
+            <% if (oldBookings.length > 0) { %>
+                <% oldBookings.forEach(function(booking) { %>
+                    <div class="booking">
+                        <p>Booking ID: <%= booking.bill_no %></p>
+                        <!-- Display other booking details -->
+                    </div>
+                <% }); %>
+                <% if (oldBookings.length >= 4) { %>
+                    <p class="load-more" onclick="loadMoreBookings_truck()">Load more</p>
+                <% } %>
+            <% } else { %>
+                <p>No old bookings.</p>
+            <% } %>
+        </div>
+    </div>
+    <style>
+        /* Base styles for the profile page */
+        /* body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        } */
+        /* .truck-profile{
+            display: inline-block;
+        } */
+        .container {
+            max-width: 800px;
+            margin: 10%;
+            padding: 20px;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        .booking-section {
+            margin-bottom: 30px;
+            margin-top: 30px;
+        }
+
+        .booking {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .load-more {
+            text-align: center;
+            cursor: pointer;
+            color: blue;
+        }
+
+        /* Add your animation styles here (optional) */
+    </style>
+
+    <!-- Load more bookings script -->
+    <script>
+        async function loadMoreBookings_truck() {
+            const response = await fetch('/loadMoreBookings_truck');
+            const data = await response.json();
+
+            // Append the new bookings to the old bookings section
+            const oldBookingsSection = document.querySelector('.booking-section:last-of-type');
+            data.forEach(booking => {
+                const bookingElem = document.createElement('div');
+                bookingElem.className = 'booking';
+                bookingElem.innerHTML = `
+                    <p>Booking ID: ${booking.bill_no}</p>
+                    <!-- Display other booking details -->
+                `;
+                oldBookingsSection.appendChild(bookingElem);
+            });
+
+            // Remove the "Load more" button if no more bookings available
+            if (data.length === 0) {
+                const loadMoreBtn = document.querySelector('.load-more');
+                loadMoreBtn.style.display = 'none';
+            }
+        }
+    </script>
+</section>
+<%- include("partials/footer"); -%>

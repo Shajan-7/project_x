@@ -1,0 +1,31 @@
+<!-- Login Page -->
+<!-- Completed -->
+
+<%- include("partials/header"); -%>
+    <link rel="stylesheet" href="adminlogin.css">
+    <section class="login">
+        <div class="login-page">
+            <h4 class="login-alert">
+                <%= mess %>
+            </h4>
+            <h2>Admin Login</h2>
+            <form method="post" action="/admin-login">
+                <div>
+                    <label for="username">User name :</label>
+                    <input type="text" name="username" />
+                </div>
+                <div>
+                    <label for="password">Password :</label>
+                    <input type="password" name="password" />
+                </div>
+                <div>
+                    <input type="submit" value="Login" />
+                </div>
+            </form>    
+        </div>
+
+    
+    
+
+    </section>
+    <%- include("partials/footer"); -%>
